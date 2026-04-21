@@ -24,12 +24,12 @@ export default async function HomePage() {
               </div>
 
               <div className="brand-description">
-                <p>Tu estilo global, ahora más cerca ✨</p>
+                <p>Tu estilo global, ahora más cerca de tí ✨</p>
                 <p>
-                  Curamos lo mejor de las tendencias internacionales para traer
+                  Selecionamos lo mejor de las tendencias para traer
                   piezas exclusivas que resaltan tu esencia.
                 </p>
-                <p>📍 Managua - Envíos a toda Nicaragua 🇳🇮</p>
+                <p>📍 Estamos ubicados en managua </p>
                 <p>💎 Moda premium a tu alcance</p>
               </div>
             </div>
