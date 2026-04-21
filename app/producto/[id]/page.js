@@ -81,7 +81,16 @@ export default async function ProductPage({ params }) {
               <p className="muted">Tipo: {product.type}</p>
             </div>
 
-            <button className="cta cta-primary">Consultar por WhatsApp</button>
+            <a
+              href={`https://wa.me/50586581794?text=${encodeURIComponent(
+                `Hola 👋, estoy interesado en este producto:\n\n🛍️ ${product.name}\n💰 Precio: C$${product.price}`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="whatsapp-btn"
+            >
+              Consultar por WhatsApp
+            </a>
           </section>
         </div>
       </div>
