@@ -1,0 +1,22 @@
+[
+  {"color": "rojo", "hex": "#FF0000"},
+  {"color": "geometrico", "hex": null},
+  {"color": "Azul y Blanco", "hex": null},
+  {"color": "Azul", "hex": "#0000FF"},
+  {"color": "Azul marino", "hex": "#000080"},
+  {"color": "rosado", "hex": "#FFC0CB"},
+  {"color": "negra", "hex": "#000000"},
+  {"color": "rosa", "hex": "#FF007F"},
+  {"color": "transparente", "hex": null},
+  {"color": "marron", "hex": "#8B4513"},
+  {"color": "blanco y negro", "hex": null},
+  {"color": "piel", "hex": "#FFCC99"},
+  {"color": "gris oscuro", "hex": "#A9A9A9"},
+  {"color": "negro", "hex": "#000000"},
+  {"color": "celeste", "hex": "#87CEEB"},
+  {"color": "variado", "hex": null},
+  {"color": "blanco", "hex": "#FFFFFF"},
+  {"color": "rojo quemado", "hex": "#A52A2A"},
+  {"color": "azul claro", "hex": "#ADD8E6"},
+  {"color": "albaricoque", "hex": "#FBCEB1"}
+]
