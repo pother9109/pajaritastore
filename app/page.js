@@ -34,20 +34,9 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="stats-row">
-              <div className="stat-card">
-                <div className="stat-label">Productos visibles</div>
-                <div className="stat-value">{meta.totalProducts}</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-label">Categorías</div>
-                <div className="stat-value">{meta.totalCategories}</div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-label">Experiencia</div>
-                <div className="stat-value">Responsive</div>
-              </div>
-            </div>
+            <p className="catalog-note">
+              Catálogo disponible con {meta.totalProducts} productos seleccionados.
+            </p>
           </div>
         </div>
       </section>
