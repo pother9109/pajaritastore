@@ -560,3 +560,42 @@ select {
     gap: 6px;
   }
 }
+
+.hero-card-with-bg {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+}
+
+.hero-bg-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/hero-fashion.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: left center;
+  opacity: 0.95;
+}
+
+.hero-bg-fade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to right,
+      rgba(245, 243, 238, 0.12) 0%,
+      rgba(245, 243, 238, 0.2) 22%,
+      rgba(245, 243, 238, 0.5) 36%,
+      rgba(245, 243, 238, 0.88) 50%,
+      rgba(245, 243, 238, 0.97) 62%,
+      rgba(245, 243, 238, 1) 100%
+    );
+}

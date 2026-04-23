@@ -8,40 +8,37 @@ export default async function HomePage() {
 
   return (
     <main>
-      <section className="hero">
-        <div className="container">
-          <div className="hero-card">
-            <div className="brand-header">
-              <div className="brand-title-wrap">
-                <img
-                  src={LOGO_URL}
-                  alt="Logo Pajarita Store"
-                  width="76"
-                  height="76"
-                  className="brand-logo"
-                />
-                <h1 className="brand-title">Pajarita Store</h1>
-              </div>
+		<div className="hero-card hero-card-with-bg">
+		  <div className="hero-bg-image" />
+		  <div className="hero-bg-fade" />
 
-              <div className="brand-description">
-                <p>Tu estilo global, ahora más cerca ✨</p>
-                <p>
-                  Curamos lo mejor de las tendencias internacionales para traer
-                  piezas exclusivas que resaltan tu esencia.
-                </p>
-                <p>📍 Disponible para entregas en Managua</p>
-                <p>💎 Moda premium a tu alcance</p>
-              </div>
-            </div>
+		  <div className="brand-header hero-content">
+			<div className="brand-title-wrap">
+			  <img
+				src="/logo.png"
+				alt="Logo Pajarita Store"
+				className="brand-logo"
+			  />
+			  <h1 className="brand-title">Pajarita Store</h1>
+			</div>
 
-            <p className="catalog-note">
-              Catálogo disponible con {meta.totalProducts} productos seleccionados.
-            </p>
-          </div>
-        </div>
-      </section>
+			<div className="brand-description">
+			  <p>Tu estilo global, ahora más cerca ✨</p>
+			  <p>
+				Curamos lo mejor de las tendencias internacionales para traer piezas
+				exclusivas que resaltan tu esencia.
+			  </p>
+			  <p>📍 Disponible para entregas en Managua</p>
+			  <p>💎 Moda premium a tu alcance</p>
+			</div>
 
-      <section className="catalog-section">
+			<p className="catalog-note">
+			  Catálogo disponible con {meta.totalProducts} productos seleccionados.
+			</p>
+		  </div>
+		</div>
+	  
+	  <section className="catalog-section">
         <div className="container">
           <CatalogView products={products} categories={meta.categories} />
         </div>
