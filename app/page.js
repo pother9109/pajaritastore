@@ -10,10 +10,10 @@ export default async function HomePage() {
         <div className="container">
           <div className="fashion-banner">
             <div className="fashion-banner-content">
-              <p className="fashion-eyebrow">Nuevos</p>
+              <p className="fashion-eyebrow">Pajarita Store</p>
               <h1 className="fashion-title">Looks que te encantarán</h1>
               <p className="fashion-description">
-                Tu estilo global, ahora más cerca. Moda premium disponible para entregas en Managua.
+                Tu estilo global, ahora más cerca. <br /> Moda premium disponible para entregas en Managua.
               </p>
               <a href="#catalogo" className="fashion-button">
                 Ver novedades
