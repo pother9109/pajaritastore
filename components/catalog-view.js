@@ -7,14 +7,44 @@ import { useMemo, useState } from 'react';
 function money(value) {
   return new Intl.NumberFormat('es-NI', {
     style: 'currency',
-    currency: 'USD'
-  }).format(value || 0);
+    currency: 'NIO',
+    currencyDisplay: 'narrowSymbol',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+    .format(value || 0)
+    .replace('NIO', 'C$');
+}
+
+const CATEGORY_COLORS = [
+  'linear-gradient(135deg, #111111 0%, #3d3d3d 100%)',
+  'linear-gradient(135deg, #f3c623 0%, #f8de72 100%)',
+  'linear-gradient(135deg, #f4eee5 0%, #e0c8a8 100%)',
+  'linear-gradient(135deg, #9f7aea 0%, #f0abfc 100%)',
+  'linear-gradient(135deg, #38bdf8 0%, #0f766e 100%)',
+  'linear-gradient(135deg, #fb7185 0%, #f97316 100%)'
+];
+
+function getCategoryStyle(category, index, isActive) {
+  if (category === 'Todas') {
+    return {
+      background: isActive
+        ? 'linear-gradient(135deg, #111111 0%, #3d3d3d 100%)'
+        : 'linear-gradient(135deg, #fffdf8 0%, #f4eee5 100%)'
+    };
+  }
+
+  return {
+    background: CATEGORY_COLORS[index % CATEGORY_COLORS.length]
+  };
 }
 
 export default function CatalogView({ products, categories }) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('Todas');
   const [sortBy, setSortBy] = useState('featured');
+
+  const categoryOptions = useMemo(() => ['Todas', ...categories], [categories]);
 
   const filteredProducts = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -33,10 +63,10 @@ export default function CatalogView({ products, categories }) {
 
     switch (sortBy) {
       case 'price-asc':
-        nextProducts = [...nextProducts].sort((a, b) => a.price - b.price);
+        nextProducts = [...nextProducts].sort((a, b) => (a.price || Number.MAX_SAFE_INTEGER) - (b.price || Number.MAX_SAFE_INTEGER));
         break;
       case 'price-desc':
-        nextProducts = [...nextProducts].sort((a, b) => b.price - a.price);
+        nextProducts = [...nextProducts].sort((a, b) => (b.price || 0) - (a.price || 0));
         break;
       case 'name':
         nextProducts = [...nextProducts].sort((a, b) => a.name.localeCompare(b.name, 'es'));
@@ -51,17 +81,39 @@ export default function CatalogView({ products, categories }) {
 
   return (
     <>
+      <div className="category-spheres" aria-label="Categorías del catálogo">
+        {categoryOptions.map((item, index) => {
+          const isActive = category === item;
+
+          return (
+            <button
+              type="button"
+              className={`category-sphere ${isActive ? 'is-active' : ''}`}
+              key={item}
+              onClick={() => setCategory(item)}
+              aria-pressed={isActive}
+            >
+              <span
+                className="category-sphere-dot"
+                style={getCategoryStyle(item, index, isActive)}
+                aria-hidden="true"
+              />
+              <span className="category-sphere-label">{item}</span>
+            </button>
+          );
+        })}
+      </div>
+
       <div className="catalog-toolbar">
         <input
           className="input"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Buscar por nombre, categoría, color o departamento"
+          placeholder="Buscar por nombre, color o departamento"
         />
 
         <select className="select" value={category} onChange={(event) => setCategory(event.target.value)}>
-          <option>Todas</option>
-          {categories.map((item) => (
+          {categoryOptions.map((item) => (
             <option key={item} value={item}>
               {item}
             </option>
@@ -78,59 +130,75 @@ export default function CatalogView({ products, categories }) {
 
       {filteredProducts.length ? (
         <div className="product-grid">
-          {filteredProducts.map((product) => (
-            <Link href={`/producto/${product.slug}`} className="product-card" key={product.slug}>
-              <div className="product-image-wrap">
-                <Image
-                  className="product-image"
-                  src={product.image}
-                  alt={product.name}
-                  width={900}
-                  height={900}
-                  sizes="(max-width: 640px) 100vw, (max-width: 980px) 50vw, 25vw"
-                />
-              </div>
+          {filteredProducts.map((product) => {
+            const isAvailable = !product.isComingSoon && product.totalInventory >= 3;
+            const isLowStock = !product.isComingSoon && product.totalInventory > 0 && product.totalInventory < 3;
 
-              <div className="product-content">
-                <div className="badges-row">
-                  {product.badges.slice(0, 2).map((badge) => (
-                    <span className="badge" key={badge}>
-                      {badge}
-                    </span>
-                  ))}
-                  {product.hasLowStock ? <span className="badge badge-warning">Pocas unidades</span> : null}
+            return (
+              <Link href={`/producto/${product.slug}`} className="product-card" key={product.slug}>
+                <div className="product-image-wrap">
+                  <Image
+                    className="product-image"
+                    src={product.image}
+                    alt={product.name}
+                    width={900}
+                    height={900}
+                    sizes="(max-width: 640px) 100vw, (max-width: 980px) 50vw, 25vw"
+                  />
                 </div>
 
-                <h3 className="product-title">{product.name}</h3>
+                <div className="product-content">
+                  {product.isComingSoon ? (
+                    <div className="badges-row">
+                      <span className="badge badge-coming-soon">Próximamente</span>
+                    </div>
+                  ) : null}
 
-                <div className="swatches-inline" aria-label="Colores disponibles">
-                  {product.colors.slice(0, 5).map((color) => (
-                    <span className="mini-swatch" key={color.key} title={color.name}>
-                      <span
-                        className={`mini-swatch-dot ${!color.hex ? 'is-neutral' : ''}`}
-                        style={{ backgroundColor: color.swatchColor }}
-                      />
-                    </span>
-                  ))}
-                  {product.colors.length > 5 ? <span className="more-colors">+{product.colors.length - 5}</span> : null}
-                </div>
+                  <h3 className="product-title">{product.name}</h3>
 
-                <div className="product-meta">
-                  <div>
+                  {product.colors?.length ? (
+                    <div className="swatches-inline" aria-label={`Colores disponibles para ${product.name}`}>
+                      {product.colors.slice(0, 5).map((color) => (
+                        <span className="mini-swatch" key={color.key} title={color.name}>
+                          <span
+                            className={`mini-swatch-dot ${!color.hex ? 'is-neutral' : ''}`}
+                            style={{ backgroundColor: color.swatchColor }}
+                            aria-hidden="true"
+                          />
+                        </span>
+                      ))}
+                      {product.colors.length > 5 ? <span className="more-colors">+{product.colors.length - 5}</span> : null}
+                    </div>
+                  ) : null}
+
+                  {!product.isComingSoon ? (
                     <div className="price-line">
                       <span className="price">{money(product.price)}</span>
                       {product.compareAtPrice ? (
                         <span className="price-compare">{money(product.compareAtPrice)}</span>
                       ) : null}
                     </div>
-                    <div className="muted">Tallas: {product.sizes.join(', ')}</div>
-                  </div>
+                  ) : (
+                    <p className="coming-soon-text">Muy pronto disponible.</p>
+                  )}
 
-                  <span className="cta cta-secondary">Ver</span>
+                  {!product.isComingSoon ? <div className="muted">Tallas: {product.sizes.join(', ')}</div> : null}
+
+                  <div className="product-card-footer">
+                    <span className="cta cta-secondary">Ver</span>
+
+                    {isAvailable ? (
+                      <span className="stock-state stock-state-ok">Disponible</span>
+                    ) : null}
+
+                    {isLowStock ? (
+                      <span className="stock-state stock-state-low">Quedan pocas unidades</span>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       ) : (
         <div className="empty-state">
