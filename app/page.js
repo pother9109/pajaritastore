@@ -1,44 +1,35 @@
 import CatalogView from '@/components/catalog-view';
 import { getCatalogMeta, getProducts } from '@/lib/products';
 
-const LOGO_URL = 'https://i.postimg.cc/XVRJ4dVn/pajaritastore.png';
-
 export default async function HomePage() {
   const [products, meta] = await Promise.all([getProducts(), getCatalogMeta()]);
 
   return (
     <main>
-		<div className="hero-card hero-card-with-bg">
-		  <div className="hero-bg-image" />
-		  <div className="hero-bg-fade" />
+      <section className="hero">
+        <div className="container">
+          <div className="fashion-banner">
+            <div className="fashion-banner-content">
+              <p className="fashion-eyebrow">Nuevos</p>
+              <h1 className="fashion-title">Looks que te encantarán</h1>
+              <p className="fashion-description">
+                Tu estilo global, ahora más cerca. Moda premium disponible para entregas en Managua.
+              </p>
+              <a href="#catalogo" className="fashion-button">
+                Ver novedades
+              </a>
+            </div>
 
-		  <div className="brand-header hero-content">
-			<div className="brand-title-wrap">
-			  <img
-				src="/logo.png"
-				alt="Logo Pajarita Store"
-				className="brand-logo"
-			  />
-			  <h1 className="brand-title">Pajarita Store</h1>
-			</div>
+            <div className="fashion-banner-image" aria-hidden="true" />
+          </div>
 
-			<div className="brand-description">
-			  <p>Tu estilo global, ahora más cerca ✨</p>
-			  <p>
-				Curamos lo mejor de las tendencias internacionales para traer piezas
-				exclusivas que resaltan tu esencia.
-			  </p>
-			  <p>📍 Disponible para entregas en Managua</p>
-			  <p>💎 Moda premium a tu alcance</p>
-			</div>
+          <p className="catalog-note">
+            Catálogo disponible con {meta.totalProducts} productos seleccionados.
+          </p>
+        </div>
+      </section>
 
-			<p className="catalog-note">
-			  Catálogo disponible con {meta.totalProducts} productos seleccionados.
-			</p>
-		  </div>
-		</div>
-	  
-	  <section className="catalog-section">
+      <section id="catalogo" className="catalog-section">
         <div className="container">
           <CatalogView products={products} categories={meta.categories} />
         </div>
