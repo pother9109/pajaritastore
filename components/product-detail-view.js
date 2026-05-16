@@ -15,13 +15,15 @@ function money(value) {
     .replace('NIO', 'C$');
 }
 
+
 function buildWhatsappLink(product, variant, selectedSize) {
   const sizeLabel = selectedSize || variant?.size || 'Por confirmar';
-
+  const skuLabel = variant?.sku || product.skuIds?.[0] || product.id || 'Por confirmar';
   const lines = product.isComingSoon
     ? [
         'Hola, me interesa este producto y quisiera saber cuándo estará disponible:',
         '',
+        `ID/SKU: ${skuLabel}`,
         `Producto: ${product.name}`,
         `Color: ${variant?.colorName || 'Por confirmar'}`,
         `Talla: ${sizeLabel}`
@@ -29,6 +31,7 @@ function buildWhatsappLink(product, variant, selectedSize) {
     : [
         'Hola, estoy interesado en este producto:',
         '',
+        `ID/SKU: ${skuLabel}`,
         `Producto: ${product.name}`,
         `Color: ${variant?.colorName || 'Por confirmar'}`,
         `Talla: ${sizeLabel}`,

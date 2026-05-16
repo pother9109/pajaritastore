@@ -16,6 +16,47 @@ function money(value) {
     .replace('NIO', 'C$');
 }
 
+function normalizeText(value = '') {
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function isTechnology(product) {
+  const category = normalizeText(product.category);
+  const department = normalizeText(product.department);
+  return category.includes('tecnologia') || department.includes('tecnologia');
+}
+
+const HOME_SECTIONS = [
+  {
+    key: 'moda',
+    title: 'Moda',
+    subtitle: 'Looks disponibles',
+    image: '/moda.webp'
+  },
+  {
+    key: 'tecnologia',
+    title: 'Tecno',
+    subtitle: 'Accesorios y gadgets',
+    image: '/tecno.webp'
+  },
+  {
+    key: 'pronto',
+    title: 'Pronto',
+    subtitle: 'Lanzamientos',
+    image: '/prox.webp'
+  },
+  {
+    key: 'todo',
+    title: 'Todo',
+    subtitle: 'Catálogo completo',
+    image: '/todo.webp'
+  }
+];
+
 const CATEGORY_COLORS = [
   'linear-gradient(135deg, #111111 0%, #3d3d3d 100%)',
   'linear-gradient(135deg, #f3c623 0%, #f8de72 100%)',
@@ -43,13 +84,32 @@ export default function CatalogView({ products, categories }) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('Todas');
   const [sortBy, setSortBy] = useState('featured');
+  const [homeSection, setHomeSection] = useState('moda');
 
   const categoryOptions = useMemo(() => ['Todas', ...categories], [categories]);
+
+  const sectionCounts = useMemo(
+    () => ({
+      moda: products.filter((product) => !product.isComingSoon && product.totalInventory > 0 && !isTechnology(product)).length,
+      tecnologia: products.filter((product) => isTechnology(product)).length,
+      pronto: products.filter((product) => product.isComingSoon).length,
+      todo: products.length
+    }),
+    [products]
+  );
+
+  const activeSectionLabel = HOME_SECTIONS.find((item) => item.key === homeSection)?.title || 'Moda';
 
   const filteredProducts = useMemo(() => {
     const term = search.trim().toLowerCase();
 
     let nextProducts = products.filter((product) => {
+      const matchesHomeSection =
+        homeSection === 'todo' ||
+        (homeSection === 'moda' && !product.isComingSoon && product.totalInventory > 0 && !isTechnology(product)) ||
+        (homeSection === 'tecnologia' && isTechnology(product)) ||
+        (homeSection === 'pronto' && product.isComingSoon);
+
       const matchesCategory = category === 'Todas' || product.category === category;
       const matchesSearch =
         !term ||
@@ -58,7 +118,7 @@ export default function CatalogView({ products, categories }) {
         product.category.toLowerCase().includes(term) ||
         product.colors.some((color) => color.name.toLowerCase().includes(term));
 
-      return matchesCategory && matchesSearch;
+      return matchesHomeSection && matchesCategory && matchesSearch;
     });
 
     switch (sortBy) {
@@ -77,10 +137,52 @@ export default function CatalogView({ products, categories }) {
     }
 
     return nextProducts;
-  }, [products, search, category, sortBy]);
+  }, [products, search, category, sortBy, homeSection]);
 
   return (
     <>
+      <section className="home-sections" aria-label="Seleccionar sección del catálogo">
+        {HOME_SECTIONS.map((item) => {
+          const isActive = homeSection === item.key;
+
+          return (
+            <button
+              key={item.key}
+              type="button"
+              className={`home-section-card ${isActive ? 'is-active' : ''}`}
+              onClick={() => {
+                setHomeSection(item.key);
+                setCategory('Todas');
+              }}
+              aria-pressed={isActive}
+            >
+              <Image
+                className="home-section-image"
+                src={item.image}
+                alt={item.title}
+                width={520}
+                height={520}
+                sizes="(max-width: 640px) 50vw, 25vw"
+              />
+              <span className="home-section-overlay" aria-hidden="true" />
+              <span className="home-section-copy">
+                <strong>{item.title}</strong>
+                <small>{item.subtitle}</small>
+                <em>{sectionCounts[item.key]} producto{sectionCounts[item.key] === 1 ? '' : 's'}</em>
+              </span>
+            </button>
+          );
+        })}
+      </section>
+
+      <div className="catalog-heading-row">
+        <div>
+          <p className="eyebrow">Explorar</p>
+          <h2>{activeSectionLabel}</h2>
+        </div>
+        <p>{filteredProducts.length} producto{filteredProducts.length === 1 ? '' : 's'} visible{filteredProducts.length === 1 ? '' : 's'}</p>
+      </div>
+
       <div className="category-spheres" aria-label="Categorías del catálogo">
         {categoryOptions.map((item, index) => {
           const isActive = category === item;
@@ -202,7 +304,7 @@ export default function CatalogView({ products, categories }) {
         </div>
       ) : (
         <div className="empty-state">
-          No encontramos productos con esos filtros. Prueba con otra búsqueda o categoría.
+          No encontramos productos en esta sección todavía. Cuando clasifiques nuevos productos en tu hoja, aparecerán aquí automáticamente.
         </div>
       )}
     </>
